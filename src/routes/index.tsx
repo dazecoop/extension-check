@@ -9,9 +9,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Extension Name Checker — Chrome & Firefox" },
-      { name: "description", content: "Check if a browser extension name is free on the Chrome Web Store and Firefox Add-ons." },
+      { name: "description", content: "Check if a browser extension name is available on the Chrome Web Store and Firefox Add-ons." },
       { property: "og:title", content: "Extension Name Checker" },
-      { property: "og:description", content: "Is your extension name taken on Chrome or Firefox? Find out, and get free alternatives." },
+      { property: "og:description", content: "Is your extension name taken on Chrome or Firefox? Check both stores at once and find similar names that are still available." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -67,21 +67,24 @@ function Index() {
     }
   }
 
-  const free = suggestions.filter((s) => s.firefox.status === "available" && s.chrome.status === "available");
+  const available = suggestions.filter((s) => s.firefox.status === "available" && s.chrome.status === "available");
 
   return (
     <main className="min-h-screen bg-background px-5 py-20 sm:py-28">
       <div className="mx-auto max-w-xl">
-        <div className="flex items-center gap-2">
-          <img src={chromeIcon} alt="" className="h-8 w-8" />
-          <img src={firefoxIcon} alt="" className="h-8 w-8" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img src={chromeIcon} alt="" className="h-8 w-8" />
+            <img src={firefoxIcon} alt="" className="h-8 w-8" />
+          </div>
+          <ThemeToggle />
         </div>
         <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-          Is your extension name free?
+          Is your extension name available?
         </h1>
         <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
           Check a browser extension name on the Chrome Web Store and Firefox Add-ons in one go. If it's taken,
-          you'll get similar names that are still free.
+          you'll get similar names that are still available.
         </p>
 
         <form onSubmit={submit} className="mt-10 flex gap-2">
@@ -135,8 +138,8 @@ function Index() {
                 </li>
               ))}
             </ul>
-            {!suggesting && free.length === 0 && (
-              <p className="mt-3 text-sm text-muted-foreground">No fully free alternatives found. Try a different word.</p>
+            {!suggesting && available.length === 0 && (
+              <p className="mt-3 text-sm text-muted-foreground">No available alternatives found. Try a different word.</p>
             )}
           </section>
         )}
@@ -144,9 +147,9 @@ function Index() {
         <section className="mt-20 border-t border-border pt-10">
           <h2 className="text-xl font-semibold tracking-tight text-foreground">What is this?</h2>
           <p className="mt-3 leading-relaxed text-muted-foreground">
-            Picking a name for a browser extension is harder than it looks. A name that's free on one store is often
-            already used on the other. This tool checks both at once, so you can pick a name that works everywhere
-            before you publish.
+            Picking a name for a browser extension is harder than it looks. A name that's available on one store is
+            often already used on the other. This tool checks both at once, so you can pick a name that works
+            everywhere before you publish.
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             <Info icon={chromeIcon} title="Chrome Web Store">
