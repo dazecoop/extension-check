@@ -4,7 +4,7 @@ import { findChromeMatch, slugify } from "./names";
 export type StoreResult = {
   status: "available" | "taken" | "error";
   url?: string;
-  matchName?: string;
+  matchName?: string | undefined;
 };
 export type CheckResult = { name: string; slug: string; firefox: StoreResult; chrome: StoreResult };
 
