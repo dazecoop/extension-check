@@ -33,13 +33,15 @@ export function parseChromeResults(html: string): { id: string; name: string; sl
   const re = /href="\.\/detail\/([^/"]+)\/([a-p]{32})"/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(html))) {
-    if (!items.has(m[2])) items.set(m[2], { id: m[2], slug: m[1], name: m[1] });
+    const [, slug = "", id = ""] = m;
+    if (!items.has(id)) items.set(id, { id, slug, name: slug });
   }
   const nameRe = /\["([a-p]{32})","https:[^"]*","([^"]{1,200})"/g;
   while ((m = nameRe.exec(html))) {
-    const it = items.get(m[1]);
-    if (it) it.name = m[2];
-    else items.set(m[1], { id: m[1], name: m[2], slug: slugify(m[2]) });
+    const [, id = "", name = ""] = m;
+    const it = items.get(id);
+    if (it) it.name = name;
+    else items.set(id, { id, name, slug: slugify(name) });
   }
   return [...items.values()];
 }
