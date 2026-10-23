@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { checkName, type CheckResult, type StoreResult } from "@/lib/check.functions";
 import { suggestNames } from "@/lib/names";
 import chromeIcon from "@/assets/chrome.svg";
