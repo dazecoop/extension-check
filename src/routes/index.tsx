@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Extension Name Checker" },
       { property: "og:description", content: "Is your extension name taken on Chrome or Firefox? Check both stores at once and find similar names that are still available." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
