@@ -1,38 +1,90 @@
-# extension-check
+# Extension Name Checker
 
-Possible to build a very simple web app that would check Chrome & Firefox extension stores for a given name/string/slug, and show if its available or not? And if not available, then suggest similar names that are available? I don't want any AI for this and we need to be mindful of rate-limit requests to both Firefox store & chrome store
+Check whether a browser extension name is free on the **Chrome Web Store** and
+**Firefox Add-ons** at the same time. If it's taken on either, you get a list of
+similar names that are still available on both.
 
-Firefox store search: https://addons.mozilla.org/en-GB/firefox/search/?q=abc
+A name that's free on one store is often already used on the other, so this
+checks both before you commit to a name, a domain and a logo.
 
-Chrome store search: https://chromewebstore.google.com/search/abc123
+> **No AI, no account, no tracking.** Suggestions are simple, predictable
+> variations of your name, and lookups are kept deliberately slow and cached so
+> neither store gets hammered.
 
-Firefox store example extension slug: https://addons.mozilla.org/en-GB/firefox/addon/abc/
+![Extension Name Checker: a name field with the Chrome and Firefox logos, above an explanation of how each store is checked](docs/screenshot.png)
 
-Chrome store example extension slug: https://chromewebstore.google.com/detail/speed-test/aeghledigokaedmpimgnfplidhdhlchg
+## Features
 
-Yeah that sounds reasonable/good. Lets build it. Minimal UI, nothing fancy, not paid. this will be open source/free. Make UI/UX nice.
+- **Both stores in one go.** Type a name and see Available, Taken or Couldn't
+  check for Chrome and Firefox side by side, with a link to the listing that
+  matched.
+- **Similar names.** If the name is taken, it tries variations like
+  `tab-tidy-pro`, `get-tab-tidy` and `my-tab-tidy`, and shows which ones are
+  free on both stores.
+- **Gentle on the stores.** Lookups run on the server with a 15 minute cache,
+  and suggestions are checked one at a time with a pause between each.
+- **Light and dark mode.** Follows your system setting, with a toggle that
+  remembers your choice.
 
-Use this as guidance for UI - https://github.com/emilkowalski/skills/blob/main/skills/apple-design/SKILL.md
+## How it checks
 
-Use a best-effort matching name found / no match found check for Chrome, and an exact slug check for Firefox.
+| Store | Method |
+| --- | --- |
+| Firefox Add-ons | **Exact.** Every add-on has a unique slug (`addons.mozilla.org/firefox/addon/<slug>/`), so it asks the AMO API whether that slug exists. |
+| Chrome Web Store | **Best effort.** Chrome has no public lookup by name, so it searches the store and looks for a result whose name or slug matches yours. |
 
-This project was built with [Lovable](https://lovable.dev).
+"Available" means no match was found. It doesn't reserve the name for you, and
+Chrome results in particular are a strong hint rather than a guarantee.
 
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/2836d2ed-38c2-47dd-81a7-9807a01f8608).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Getting started
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+bun install
+bun run dev
 ```
+
+Then open the URL Vite prints. npm works too: `npm install && npm run dev`.
+
+| Command | What it does |
+| --- | --- |
+| `bun run dev` | Dev server with hot reload |
+| `bun run build` | Production build into `.output/` |
+| `bun run preview` | Serve the production build locally |
+| `bun run test` | Run the tests (Vitest) |
+| `bun run lint` | ESLint + Prettier |
+
+## Deploying
+
+The build targets **Cloudflare Workers** by default and writes a ready-to-use
+`wrangler.json` alongside it:
+
+```sh
+bun run build
+npx nitro deploy --prebuilt
+```
+
+The server side is built with [Nitro](https://nitro.build), so it can target
+other hosts too. Set `NITRO_PRESET` when building, for example
+`NITRO_PRESET=node-server bun run build` for a plain Node server or
+`NITRO_PRESET=vercel` for Vercel.
+
+## Project structure
+
+```
+src/routes/index.tsx         The page: search, results and suggestions
+src/routes/__root.tsx        App shell, meta tags, 404 and error pages
+src/lib/check.functions.ts   Server function that queries both stores, with the cache
+src/lib/names.ts             Slugs, name variations and Chrome result parsing
+src/server.ts, src/start.ts  SSR entry and error handling
+src/test/                    Tests
+```
+
+Built with [TanStack Start](https://tanstack.com/start), React,
+[Tailwind CSS](https://tailwindcss.com) and Vite.
+
+## Credits
+
+Interface guided by Emil Kowalski's
+[Apple design notes](https://github.com/emilkowalski/skills/blob/main/skills/apple-design/SKILL.md).
+
+Free and open source. Not affiliated with Google or Mozilla.
